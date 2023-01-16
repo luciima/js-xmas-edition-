@@ -77,6 +77,14 @@ $botonOK.onclick = function () {
     const cantidadIntegrantes = Number(
         document.querySelector("#cantidad-integrantes").value
     );
+
+    if (validarCantidadIntegrantes(cantidadIntegrantes) !== "") {
+        document.querySelector("#cantidad-integrantes").className = "error";
+        return false;
+    } else {
+        document.querySelector("#cantidad-integrantes").className = "";
+    }
+
     for (let i = 1; i <= cantidadIntegrantes; i++) {
         crearIntegrante($formulario, i);
     }
@@ -88,6 +96,21 @@ $botonOK.onclick = function () {
 
 $botonCalcular.onclick = function () {
     let edadesIntegrantes = document.querySelectorAll(".edades-integrantes");
+    let cantidadErrores = 0;
+
+    edadesIntegrantes.forEach(function (edad) {
+        if (validarEdad(edad.value) !== "") {
+            edad.classList.add("error");
+            cantidadErrores += 1;
+        } else {
+            edad.classList.remove("error");
+        }
+    });
+
+    if (cantidadErrores !== 0) {
+        return false;
+    }
+
     edadesIntegrantes = extraerNumeros(edadesIntegrantes);
     const resultados = {
         "resultado-mayor-edad": hallarMayorNumero(edadesIntegrantes),
