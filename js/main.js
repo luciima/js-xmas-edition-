@@ -1,34 +1,52 @@
-/*
-1. Obtener el valor de `ciudad` y validar que no sea vacío.
-2. Obtener el valor de `descripcion-regalo` y validar que:
-- tenga menos de 100 caracteres
-- que no esté vacío.
-- sólo tenga letras y números
-*/
-
-function validarNombre(nombre) {
-    if (nombre.length === 0) {
-        return "Este campo debe tener al menos un caracter.";
-    }
-    if (nombre.length >= 50) {
-        return "Este campo debe tener menos de 50 caracteres.";
-    }
-    return "";
+function manejarErrores(errores) {
+    const keys = Object.keys(errores);
+    const $errores = document.querySelector("#errores");
+    keys.forEach(function (key) {
+        const error = errores[key];
+        if (document.querySelector(`#error-${key}`)) {
+            document.querySelector(`#error-${key}`).remove();
+        }
+        if (error) {
+            $formulario[key].classList.add("error");
+            const $error = document.createElement("li");
+            $error.innerText = error;
+            $error.id = `error-${key}`;
+            $errores.appendChild($error);
+        } else {
+            $formulario[key].classList.remove("error");
+        }
+    });
 }
 
-function validarDescripcionRegalo(descripcionRegalo) {
-    if (descripcionRegalo.length === 0) {
-        return "Este campo debe tener al menos un caracter.";
+function validarFormulario(event) {
+    const nombre = document.formulario.nombre.value;
+    const ciudad = document.formulario.ciudad.value;
+    const comportamiento = document.formulario.comportamiento.value;
+    const descripcionRegalo = document.formulario["descripcion-regalo"].value;
+    let errores = {
+        nombre: validarNombre(nombre),
+        ciudad: validarCiudad(ciudad),
+        "descripcion-regalo": validarDescripcionRegalo(descripcionRegalo),
+    };
+    let cantidadErrores = 0;
+    Object.keys(errores).forEach(function (key) {
+        if (errores[key] !== "") {
+            document.formulario[key].classList.add("error");
+            cantidadErrores += 1;
+        } else {
+            document.formulario[key].classList.remove("error");
+        }
+    });
+    if (cantidadErrores === 0) {
+        $formulario.classList.add("oculto");
+        document.querySelector("#exito").classList.remove("oculto");
+        setTimeout(function () {
+            window.location.href = "wishlist.html";
+        }, 5000);
     }
-    if (descripcionRegalo.length >= 100) {
-        return "Este campo debe tener menos de 100 caracteres.";
-    }
-    return "";
+    manejarErrores(errores);
+    event.preventDefault();
 }
 
-function validarCiudad(ciudad) {
-    if (ciudad.length === 0) {
-        return "Este campo debe tener al menos un caracter.";
-    }
-    return "";
-}
+const $formulario = document.formulario;
+$formulario.onsubmit = validarFormulario;
